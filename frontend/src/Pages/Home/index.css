@@ -1,0 +1,142 @@
+.container {
+  background-image: url("../../Assets/freezer.jpg");
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+}
+
+.btn {
+  display:block;
+  /* font-size: 80px;
+  height: 160px;
+  padding: 10px 20px; */
+  box-sizing: border-box;
+  margin: 0 auto;
+  width: 600px;
+  max-width: 700px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: all 0.3s ease-out;
+}
+
+.btn:hover,
+.btn:focus,
+.btn:active {
+  background: #fff;
+  color: #000;
+  transition: all 0.5s ease-in;
+}
+
+.btn:focus {
+  outline: none;
+}
+
+.btn-item {
+  background: rgba(30, 52, 142, 0.5);
+  border: none;
+}
+
+.btn-item:hover,
+.btn-item:focus,
+.btn-item:active {
+  background: rgb(30, 52, 142);
+  color: #fff;
+}
+
+.btn-category {
+  border: 1px solid #fff;
+}
+
+.btn-category:hover,
+.btn-category:focus,
+.btn-category:active {
+  background: #fff;
+  color: #000;
+  transition: all 0.5s ease-in;
+}
+
+/* Extra Small Viewport */
+@media (max-width: 575px) {
+  .btn {
+    font-size: 40px;
+    height: 100px;
+    width: 100%;
+    padding: 5px 10px;
+  }
+
+  /* .btn span {
+    font-size: 24px;
+  } */
+  
+  .btn-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+/* Small Viewport Devices */
+@media (min-width: 576px) and (max-width: 767px) {
+  .btn {
+    font-size: 60px;
+    height: 140px;
+    width: 100%;
+    padding: 10px 20px;
+  }
+
+  .btn-container {
+    flex-direction: column;
+    gap: 30px;
+  }
+}
+
+/* Medium Viewport Devices */
+@media (min-width: 768px) and (max-width: 991px) {
+  .btn {
+    font-size: 80px;
+    height: 160px;
+    padding: 10px 20px;
+  }
+}
+
+/* Large Viewport Devices */
+@media (min-width: 992px) and (max-width: 1499px) {
+  .btn {
+    font-size: 80px;
+    height: 160px;
+    width: 100%;
+    padding: 15px 20px;
+  }
+  
+  .btn-container {
+    flex-direction: row;
+    gap: 40px;
+  }
+}
+
+/* Extra-large Viewport Devices */
+@media (min-width: 1500px) {
+  .btn {
+    font-size: 80px;
+    height: 160px;
+    padding: 15px 30px;
+  }
+
+  .btn-container {
+    flex-direction: row;
+    gap: 50px;
+  }
+}
