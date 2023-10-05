@@ -4,6 +4,7 @@ whats-in-my-freezer.code-workspace
 notes.txt
 playground.js
 playground.css
+.envrc
 
 # dependencies
 /node_modules

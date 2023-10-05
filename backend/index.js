@@ -10,10 +10,16 @@ const app = express()
 // const cors = require("cors")
 // const axios = require("axios")
 
-app.get('/', (request, response) => {
-  console.log(request)
-  return response.status(234).send('Hi Linda!')
+// hide api key
+app.get("/", (request, response) => {
+  res.json("hi from the back end")
 })
+
+// bookstore
+// app.get('/', (request, response) => {
+//   console.log(request)
+//   return response.status(234).send('Hi Linda!')
+// })
 
 app.listen(PORT, () => {
   console.log(`Server is running on port: ${PORT}`)
