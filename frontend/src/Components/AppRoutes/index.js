@@ -8,7 +8,6 @@ import NoMatch from "../../Pages/NoMatch"
 
 export default function AppRoutes() {
   return (
-    <div>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/item" element={<Item />} />
@@ -18,6 +17,5 @@ export default function AppRoutes() {
         {/* <Route path="/exit" element={<Exit />} /> */}
         <Route path="*" element={<NoMatch />} />
       </Routes>
-    </div>
   )
 }
