@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Button, Input, Modal, Table, Tag } from "antd"
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons"
 
-export default function PrintItem() {
+export default function ViewItems() {
   const [alreadySelectedRows, setAlreadySelectedRows] = useState([])
   const [editingItem, setEditingItem] = useState(null)
   const [isEditing, setIsEditing] = useState(false)
