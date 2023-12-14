@@ -3,28 +3,60 @@ import { Category } from "../models/categoryModel.js"
 
 const router = express.Router()
 
-// route for SAVE a new category
+// route for SAVE a new category or categories
 router.post("/", async (request, response) => {
   try {
-    if (
-      !request.body.name
-    ) {
-      return response.status(400).send({
-        message: "Send the required field: name",
-      })
+    // Log to check the received data in the console
+    console.log(request.body)
+    if (Array.isArray(request.body)) {
+      // If it's an array, create multiple categories
+      const categories = await Promise.all(
+        request.body.map(async (category) => {
+          if (!category.name) {
+            throw new Error("Send the required field: name")
+          }
+          return await Category.create({ name: category.name })
+        })
+      )
+      return response.status(201).send(categories)
+    } else {
+      // If it's a single object, create a single category
+      if (!request.body.name) {
+        return response.status(400).send({
+          message: "Send the required field: name",
+        })
+      }
+      const newCategory = await Category.create({ name: request.body.name })
+      return response.status(201).send(newCategory)
     }
-    const newCategory = {
-      name: request.body.name
-    }
-
-    const category = await Category.create(newCategory)
-
-    return response.status(201).send(category)
   } catch (error) {
     console.log(error.message)
     response.status(500).send({ message: error.message })
   }
 })
+
+// router.post("/", async (request, response) => {
+//   try {
+//     console.log(request.body)
+//     if (
+//       !request.body.name
+//     ) {
+//       return response.status(400).send({
+//         message: "Send the required field: name",
+//       })
+//     }
+//     const newCategory = {
+//       name: request.body.name
+//     }
+
+//     const category = await Category.create(newCategory)
+
+//     return response.status(201).send(category)
+//   } catch (error) {
+//     console.log(error.message)
+//     response.status(500).send({ message: error.message })
+//   }
+// })
 
 // route for GET all categories
 router.get("/", async (request, response) => {

@@ -1,14 +1,36 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+// import { useNavigate } from "react-router-dom"
 import { Button, Input, Modal } from "antd"
 import { SelectOutlined} from "@ant-design/icons"
 import "./index.css"
+import Spinner from "../../Components/Spinner"
+import axios from "axios"
 
 export default function HomePage() {
-  const [item, setItem] = useState("")
+  // const [item, setItem] = useState("")
   const [category, setCategory] = useState("")
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
+
+  // NOTE: not viewing all categories here!
+  // const [categories, setCategories] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get('http://localhost:5555/categories')
+      .then((response) => {
+        setCategory(response.data.data);
+        // setCategories(response.data.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
+  }, []);
 
   // const handleItemChange = (e) => {
   //   setItem(e.target.value)

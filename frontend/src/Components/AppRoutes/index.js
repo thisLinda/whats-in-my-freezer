@@ -13,7 +13,7 @@ export default function AppRoutes() {
         <Route path="/item" element={<Item />} />
         <Route path="/item/:category" element={<Item />} />
         <Route path="/printItem" element={<PrintItem />} />
-        {/* <Route path="/viewCategories" element={<ViewCategories />} /> */}
+        <Route path="/viewCategories" element={<ViewCategories />} />
         {/* <Route path="/exit" element={<Exit />} /> */}
         <Route path="*" element={<NoMatch />} />
       </Routes>
