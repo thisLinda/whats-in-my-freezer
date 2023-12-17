@@ -100,7 +100,7 @@ function NavMenu({ isInline=false }) {
             icon: <PrinterOutlined />,
             children: [
               { label: "Print Item", key: "/printItem"},
-              { label: "Print Category", key: "/printCategory"}]
+              { label: "View Categories", key: "/viewCategories"}]
           },
           {
             label: "Exit",
