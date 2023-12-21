@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
-import { Divider, List, Dropdown, Menu, Modal, Input, Select } from "antd"
-import { DownOutlined } from "@ant-design/icons"
+import { Divider, List, Dropdown, Menu, Modal, Input } from "antd"
 import axios from "axios"
 import Spinner from "../../Components/Spinner/index"
+import "./index.css"
 
 export default function ViewCategories() {
   const [categoryList, setCategoryList] = useState([])
@@ -10,9 +10,6 @@ export default function ViewCategories() {
   const [selectedCategoryId, setSelectedCategoryId] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [newCategoryName, setNewCategoryName] = useState("")
-  const [editMode, setEditMode] = useState(false)
-  console.log("isModalOpen:", isModalOpen)
-  console.log("selectedCategoryId:", setSelectedCategoryId)
 
   useEffect(() => {
     setLoading(true)
@@ -20,7 +17,6 @@ export default function ViewCategories() {
       .then((response) => {
         setCategoryList(response.data.data)
         // setLoading(false)
-        // console.log(response)
       })
       .catch((error) => {
         console.log(error)
@@ -59,6 +55,7 @@ export default function ViewCategories() {
           (category) => category._id !== selectedCategoryId
         )
         setCategoryList(updatedList)
+        setSelectedCategoryId(null)
         setIsModalOpen(false)
       })
       .catch((error) => {
@@ -66,65 +63,59 @@ export default function ViewCategories() {
       })
   }
 
-  const handleOpenSelect = (categoryId) => {
-    console.log("Hovered category ID:", categoryId)
-    setSelectedCategoryId(categoryId)
-    setIsModalOpen(true)
-  }
+  const menu = (
+    <Menu onClick={({ key }) => handleMenuClick(key)}>
+      <Menu.Item key="edit">Edit</Menu.Item>
+      <Menu.Item key="delete">Delete</Menu.Item>
+    </Menu>
+  )
 
-  const handleMouseLeave = () => {
-    console.log("Modal closed")
-    setSelectedCategoryId(null)
+  const handleMenuClick = (key) => {
+    if (key === 'edit') {
+      setIsModalOpen(true);
+    } else if (key === 'delete') {
+      handleDelete();
+    }
   }
 
   const handleCancel = () => {
-    console.log("modal is open")
     setIsModalOpen(false);
     setNewCategoryName(null)
   }
 
   return (
-    <div>
+    <div className="categoryList">
       <Divider orientation="left">Categories</Divider>
       <List
         size="large"
         bordered
         dataSource={categoryList}
         renderItem={(category) => (
-          <List.Item
-            key={category.id}
-            onMouseEnter={() => handleOpenSelect(category._id)}
-            onMouseLeave={handleMouseLeave}
-            style={{
-              backgroundColor:
-                selectedCategoryId === category._id ? "#e6f7ff" : "inherit",
-              cursor: "pointer",
-            }}
-          >
-            <span>{category.name}</span>
-            <Modal
-              title="Edit or Delete Category"
-              open={isModalOpen && selectedCategoryId === category.id}
-              onCancel={handleCancel}
-              footer={null}
-              // onOk={null}
+          <List.Item key={category.id}>
+            <Dropdown
+              overlay={menu}
+              trigger={["click"]}
+              onOpenChange={(open) =>
+                open && setSelectedCategoryId(category._id)
+              }
             >
-              {/* <p
-                style={{ cursor: "pointer" }}
-                onClick={handleEdit}
-              >
-                Edit
-              </p>
-              <p
-                style={{ cursor: "pointer" }}
-                onClick={handleDelete}
-              >
-                Delete
-              </p> */}
-            </Modal>
+              <span>{category.name}</span>
+            </Dropdown>
           </List.Item>
         )}
       />
+        <Modal
+          title="Edit Category"
+          open={isModalOpen}
+          onOk={() => handleEdit(newCategoryName)}
+          onCancel={handleCancel}
+        >
+          <Input
+            value={newCategoryName}
+            onChange={(e) => setNewCategoryName(e.target.value)}
+            onPressEnter={() => handleEdit(newCategoryName)}
+          />
+        </Modal>
     </div>
   )
 }

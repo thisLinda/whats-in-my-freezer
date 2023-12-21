@@ -21,6 +21,7 @@ export default function AppHeader() {
   return (
     <div className="navContainer"
       style={{
+        padding: "0 50px 0 0",
         backgroundColor: "blue",
         display: "flex",
         alignItems: "center", 
@@ -44,7 +45,7 @@ export default function AppHeader() {
           setOpenMenu(false)
         }}
         closeable={false}
-        bodyStyle={{ backgroundColor:"orange" }}
+        style={{ backgroundColor:"orange" }}
       >
         <NavMenu isInline={true} />
       </Drawer>
