@@ -1,9 +1,9 @@
 # Getting Started!
 
-8/9/23 Finally tackling a personal and much-needed app.
+Tackling a personal and much-needed app.
 
-New learning, incorporating [Ant Design](https://ant.design/) rather than Bootstrap or MUI.
-,,,it's a test
+Challenging myself with new learning by incorporating [Ant Design](https://ant.design/) rather than Bootstrap or MUI.
+
 ## Available Scripts
 
 In the project directory, you can run:

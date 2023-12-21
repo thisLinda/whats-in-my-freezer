@@ -108,15 +108,23 @@
   .btn {
     font-size: 80px;
     height: 160px;
+    width: 100%;
     padding: 10px 20px;
+  }
+
+  .btn-container {
+    flex-direction: column;
+    gap: 30px;
   }
 }
 
 /* Large Viewport Devices */
-@media (min-width: 992px) and (max-width: 1499px) {
+/* @media (min-width: 992px) and (max-width: 1499px) { */
+@media (min-width: 992px) and (max-width: 1199px) {
+
   .btn {
-    font-size: 80px;
-    height: 160px;
+    font-size: 60px;
+    height: 140px;
     width: 100%;
     padding: 15px 20px;
   }
@@ -124,19 +132,24 @@
   .btn-container {
     flex-direction: row;
     gap: 40px;
+    padding: 0 6em;
   }
 }
 
 /* Extra-large Viewport Devices */
-@media (min-width: 1500px) {
+/* @media (min-width: 1500px) { */
+@media (min-width: 1200px) {
+
   .btn {
     font-size: 80px;
     height: 160px;
+    width: 100%;
     padding: 15px 30px;
   }
 
   .btn-container {
     flex-direction: row;
     gap: 50px;
+    padding: 0 6em;
   }
 }

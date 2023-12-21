@@ -8,7 +8,9 @@ export default function AppContent() {
   } = theme.useToken()
 
   return (
-    <div style={{ background: colorBgContainer, padding: "0 50px" }}>
+    <div style={{ background: colorBgContainer }}>
+
+    {/* <div style={{ background: colorBgContainer, padding: "0 50px" }}> */}
       <AppRoutes />
       <Outlet />
     </div>
