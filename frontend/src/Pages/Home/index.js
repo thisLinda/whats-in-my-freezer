@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 // import { useNavigate } from "react-router-dom"
-import { Button, Input, Modal } from "antd"
+import { Button, Input, Modal, message } from "antd"
 import { SelectOutlined} from "@ant-design/icons"
 import "./index.css"
 import Spinner from "../../Components/Spinner"
@@ -10,38 +10,18 @@ import axios from "axios"
 export default function HomePage() {
   // const [item, setItem] = useState("")
   const [category, setCategory] = useState("")
+  const [categories, setCategories] = useState("")
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const inputRef = useRef(null)
 
   // NOTE: not viewing all categories here!
-  // const [categories, setCategories] = useState([])
-  const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    setLoading(true);
-    axios
-      .get('http://localhost:5555/categories')
-      .then((response) => {
-        setCategory(response.data.data);
-        // setCategories(response.data.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-      });
-  }, []);
-
-  // const handleItemChange = (e) => {
-  //   setItem(e.target.value)
-  // }
-  
   const handleAddItem = () => {
-    // if (item) {
-      // setItem("")
+    if (category) {
       navigate(`/item/${encodeURIComponent(category)}`)
-      // navigate("/item/")
-    // }
+    }
   }
 
   const handleCategoryChange = (e) => {
@@ -50,9 +30,39 @@ export default function HomePage() {
 
   const handleAddCategory = () => {
     if (category) {
-      setCategory("")
-      setOpen(false)
-      navigate(`/item/${encodeURIComponent(category)}`)
+      axios
+        .get(`http://localhost:5555/categories?name=${category}`)
+        .then((response) => {
+          const existingCategories = response.data.data
+
+          const categoryExists = existingCategories.some((existingCat) => existingCat.name === category)
+
+          if (categoryExists) {
+            message.warning("Category already exists.")
+          } else {
+            axios
+              .post("http://localhost:5555/categories", { name: category })
+              .then(() => {
+                message.success("Category added successfully.")
+
+                setCategories((prevCategories) => [
+                  ...prevCategories,
+                  { value: category, label: category },
+                ])
+
+                setOpen(false)
+                navigate(`/item/${encodeURIComponent(category)}`)
+              })
+              .catch((error) => {
+                console.log(error);
+                message.error("Failed to add category.")
+              })
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          message.error("Error checking category existence.")
+        })
     }
   }
 
@@ -66,6 +76,12 @@ export default function HomePage() {
   const showModal = () => {
     setOpen(true)
   }
+
+  useEffect(() => {
+    if (open && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [open])
 
   return (
     <div className="container">
@@ -90,7 +106,7 @@ export default function HomePage() {
         onCancel={() => setOpen(false)}
       >
         <Input
-          ref={(input) => input && input.focus()}
+          ref={inputRef}
           showCount
           maxLength={50}
           placeholder="Enter Category"

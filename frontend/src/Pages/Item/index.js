@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react"
 import {
   PlusOutlined
-} from "@ant-design/icons";
+} from "@ant-design/icons"
 import {
+  AutoComplete,
   Button,
-  Cascader,
   Col,
   DatePicker,
   Form,
@@ -12,15 +12,15 @@ import {
   InputNumber,
   Row,
   Select,
-  Space,
   Spin
 } from "antd"
 import { useParams } from "react-router-dom"
 import CustomMessage from "../../Components/CustomMessage"
 import dayjs from "dayjs"
+import axios from "axios"
 
-const { TextArea } = Input;
-const { Option } = Select;
+const { TextArea } = Input
+const { Option } = Select
 
 export default function Item() {
   const [componentDisabled, setComponentDisabled] = useState(false)
@@ -30,10 +30,19 @@ export default function Item() {
   const [selectedUnit, setSelectedUnit] = useState("")
   const [successMessageVisible, setSuccessMessageVisible] = useState(false)
   const [errorMessageVisible, setErrorMessageVisible] = useState(false)
-
-  const [form] = Form.useForm()
+  const [categories, setCategories] = useState([])
+  const [localCategories, setLocalCategories] = useState([])
+  const [loadingCategories, setLoadingCategories] = useState(false)
 
   const { category } = useParams()
+  // const { category: initialCategory } = useParams()
+
+    const [form] = Form.useForm()
+  // const [form] = Form.useForm({
+  //   initialValue: {
+  //     category: initialCategory || undefined,
+  //   }
+  // })
 
   const itemInputRef = useRef(null)
   const categoryInputRef = useRef(null)
@@ -46,15 +55,36 @@ export default function Item() {
   const now = dayjs()
 
   useEffect(() => {
-    if (categoryInputRef.current) {
-      categoryInputRef.current.focus()
+    setLoadingCategories(true)
+    axios
+      .get('http://localhost:5555/categories')
+      .then((response) => {
+        const formattedCategories = response.data.data.map((category) => ({
+        // setCategories(response.data.data.map(category => ({
+          value: category._id,
+          label: category.name
+        }))
+        setCategories(formattedCategories)
+        setLocalCategories(formattedCategories)
+        setLoadingCategories(false)
+      })
+      .catch((error) => {
+        console.log(error)
+        setLoadingCategories(false)
+      })
+  }, [setCategories])
+
+
+  const handleCategorySelect = (value) => {
+    if (value && itemInputRef.current) {
+      itemInputRef.current.focus()
     }
-  }, [])
+  }
 
   const handleItemQuantityChange = (value) => {
     setItemQuantity(value);
     calculateTotalQuantity(value, selectedUnit);
-  };
+  }
 
   const calculateTotalQuantity = (quantity, unit) => {
     const numericValue = parseFloat(quantity)
@@ -83,7 +113,7 @@ export default function Item() {
 
   const handleUnitOfMeasurementChange = (value) => {
     setSelectedUnit(value);
-    calculateTotalQuantity(itemQuantity, value);
+    calculateTotalQuantity(itemQuantity, value)
   }
 
   const onClick = ({ key }) => {
@@ -111,7 +141,7 @@ export default function Item() {
       label: "somethings",
       key: "5",
     },
-  ];
+  ]
 
   const onSubmit = () => {
     form
@@ -135,7 +165,7 @@ export default function Item() {
   }
 
   return (
-    <div>
+    <>
       {successMessageVisible && (   
         <CustomMessage type="success" content="Item added successfully!" />
       )}
@@ -153,20 +183,33 @@ export default function Item() {
             <Form.Item
               label="Category"
               name="category"
-              initialValue={category}
+              initialValue={undefined}
+              // initialValue={initialCategory || undefined}
               rules={[
-                { required: true },
+                { required: true,
+                  message: "Please select a category" },
               ]}
+              htmlFor="category-select"
             >
-              <Cascader
+              <Select
+                autoFocus
                 style={{ width: "100%", maxWidth: "200px" }}
-                options={[
-                  {
-                    value: "",
-                    label: "",
-                  },
-                ]}
-              />
+                // options={categories}
+                placeholder="Select a category"
+                loading={loadingCategories}
+                id="category-select"
+                onSelect={handleCategorySelect}
+              >
+                {categories.map(option => (
+                  <Option
+                    key={option.value}
+                    value={option.value}
+                    label={option.label}
+                  >
+                    {option.label}
+                  </Option>
+                ))} 
+              </Select>
             </Form.Item>
           </Col>
           
@@ -185,7 +228,7 @@ export default function Item() {
               hasFeedback
             >
               <Input
-                autoFocus
+                // autoFocus
                 ref={itemInputRef}
                 required
                 tabIndex={1}
@@ -298,6 +341,6 @@ export default function Item() {
           </Button>
         </Form.Item>
       </Form>
-    </div>
+    </>
   )
 }

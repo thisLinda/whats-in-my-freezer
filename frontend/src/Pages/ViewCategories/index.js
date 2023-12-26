@@ -85,37 +85,39 @@ export default function ViewCategories() {
 
   return (
     <div className="categoryList">
-      <Divider orientation="left">Categories</Divider>
-      <List
-        size="large"
-        bordered
-        dataSource={categoryList}
-        renderItem={(category) => (
-          <List.Item key={category.id}>
-            <Dropdown
-              overlay={menu}
-              trigger={["click"]}
-              onOpenChange={(open) =>
-                open && setSelectedCategoryId(category._id)
-              }
-            >
-              <span>{category.name}</span>
-            </Dropdown>
-          </List.Item>
-        )}
-      />
-        <Modal
-          title="Edit Category"
-          open={isModalOpen}
-          onOk={() => handleEdit(newCategoryName)}
-          onCancel={handleCancel}
-        >
-          <Input
-            value={newCategoryName}
-            onChange={(e) => setNewCategoryName(e.target.value)}
-            onPressEnter={() => handleEdit(newCategoryName)}
-          />
-        </Modal>
+      <>
+        <Divider orientation="left">Categories</Divider>
+        <List
+          size="large"
+          bordered
+          dataSource={categoryList}
+          renderItem={(category) => (
+            <List.Item key={category.id}>
+              <Dropdown
+                overlay={menu}
+                trigger={["click"]}
+                onOpenChange={(open) =>
+                  open && setSelectedCategoryId(category._id)
+                }
+              >
+                <span>{category.name}</span>
+              </Dropdown>
+            </List.Item>
+          )}
+        />
+          <Modal
+            title="Edit Category"
+            open={isModalOpen}
+            onOk={() => handleEdit(newCategoryName)}
+            onCancel={handleCancel}
+          >
+            <Input
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              onPressEnter={() => handleEdit(newCategoryName)}
+            />
+          </Modal>
+      </>
     </div>
   )
 }
