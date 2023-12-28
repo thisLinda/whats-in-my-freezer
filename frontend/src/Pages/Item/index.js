@@ -22,7 +22,7 @@ import axios from "axios"
 const { TextArea } = Input
 const { Option } = Select
 
-export default function Item() {
+export default function Item(props) {
   const [componentDisabled, setComponentDisabled] = useState(false)
   const [loading, setLoading] = useState(false)
   const [itemQuantity, setItemQuantity] = useState("")
@@ -30,19 +30,16 @@ export default function Item() {
   const [selectedUnit, setSelectedUnit] = useState("")
   const [successMessageVisible, setSuccessMessageVisible] = useState(false)
   const [errorMessageVisible, setErrorMessageVisible] = useState(false)
-  const [categories, setCategories] = useState([])
+  const { passedCategories } = props
+  const [categories, setCategories] = useState(props.passedCategories || [])
   const [localCategories, setLocalCategories] = useState([])
   const [loadingCategories, setLoadingCategories] = useState(false)
+  const [newlyAddedCategory, setNewlyAddedCategory] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState(undefined)
 
   const { category } = useParams()
-  // const { category: initialCategory } = useParams()
 
-    const [form] = Form.useForm()
-  // const [form] = Form.useForm({
-  //   initialValue: {
-  //     category: initialCategory || undefined,
-  //   }
-  // })
+  const [form] = Form.useForm()
 
   const itemInputRef = useRef(null)
   const categoryInputRef = useRef(null)
@@ -55,30 +52,98 @@ export default function Item() {
   const now = dayjs()
 
   useEffect(() => {
-    setLoadingCategories(true)
-    axios
-      .get('http://localhost:5555/categories')
-      .then((response) => {
-        const formattedCategories = response.data.data.map((category) => ({
-        // setCategories(response.data.data.map(category => ({
-          value: category._id,
-          label: category.name
-        }))
-        setCategories(formattedCategories)
-        setLocalCategories(formattedCategories)
-        setLoadingCategories(false)
-      })
-      .catch((error) => {
-        console.log(error)
-        setLoadingCategories(false)
-      })
-  }, [setCategories])
+    const fetchData = async () => {
+      try {
+        if (!props.passedCategories) {
+          setLoadingCategories(true)
+          const response = await axios.get("http://localhost:5555/categories")
+          const formattedCategories = response.data.data.map((category) => ({
+            value: category._id,
+            label: category.name
+          }))
+          setCategories(formattedCategories);
+          setLoadingCategories(false)
+        }
+      } catch(error) {
+          console.log(error)
+          setLoadingCategories(false)
+        }
+      }
 
+      fetchData()
+
+      // Set the newly added category if available in props
+      if (props.newlyAddedCategory) {
+        setSelectedCategory(props.newlyAddedCategory)
+      }
+    }, [props.passedCategories, props.newlyAddedCategory])
+
+// useEffect(() => {
+//     if (props.passedCategories) {
+//       setCategories(props.passedCategories)
+//     }
+
+//     if (props.newlyAddedCategory) {
+//       setNewlyAddedCategory(props.newlyAddedCategory)
+//     }
+//   }, [props.passedCategories, props.newlyAddedCategory])
+//       // setLoadingCategories(true);
+//       axios
+//         .get('http://localhost:5555/categories')
+//         .then((response) => {
+//           const formattedCategories = response.data.data.map((category) => ({
+//             value: category._id,
+//             label: category.name
+//           }));
+
+//           setCategories(formattedCategories);
+//           setLoadingCategories(false);
+//         })
+//         .catch((error) => {
+//           console.log(error);
+//           setLoadingCategories(false);
+//         });
+//     }
+//   }, [passedCategories])
+
+  // useEffect(() => {
+  //   if (props.passedCategories) {
+  //     setCategories(props.passedCategories)
+  //   } else {
+  //     setLoadingCategories(true)
+  //     axios
+  //       .get('http://localhost:5555/categories')
+  //       .then((response) => {
+  //         const formattedCategories = response.data.data.map((category) => ({
+  //           value: category._id,
+  //           label: category.name
+  //         }))
+  //         const updatedCategories = [
+  //           {
+  //             value: 'NEW_CATEGORY_ID',
+  //             label: category
+  //           },
+  //           ...formattedCategories
+  //         ]
+
+  //         setCategories(formattedCategories)
+  //         setLoadingCategories(false)
+  //       })
+  //       .catch((error) => {
+  //         console.log(error)
+  //         setLoadingCategories(false)
+  //       })
+  //   }
+  // }, [props.passedCategories])
 
   const handleCategorySelect = (value) => {
     if (value && itemInputRef.current) {
       itemInputRef.current.focus()
     }
+  }
+
+  const handleCategoryChange = (value) => {
+    setSelectedCategory(value)
   }
 
   const handleItemQuantityChange = (value) => {
@@ -144,33 +209,50 @@ export default function Item() {
   ]
 
   const onSubmit = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        if (!loading) {
-          setLoading(true)
-          setTimeout(() => {
-            if (!loading) {
-              setSuccessMessageVisible(true)
-              setLoading(false)
-              form.resetFields()
-            }
-          }, 200)
-        }
-      })
-      .catch((err) => {
-        console.log("Validation failed:", err)
-        setErrorMessageVisible(true)
-      })
+    // Handle form submission without validation
+    setLoading(true)
+    setTimeout(() => {
+      setSuccessMessageVisible(true)
+      setLoading(false);
+      form.resetFields();
+    }, 200)
   }
+
+  // validation failing
+  // const onSubmit = () => {
+  //   form
+  //     .validateFields()
+  //     .then((values) => {
+  //       if (!loading) {
+  //         setLoading(true)
+  //         setTimeout(() => {
+  //           if (!loading) {
+  //             setSuccessMessageVisible(true)
+  //             setLoading(false)
+  //             form.resetFields()
+  //           }
+  //         }, 200)
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log("Validation failed:", err)
+  //       setErrorMessageVisible(true)
+  //     })
+  // }
 
   return (
     <>
       {successMessageVisible && (   
-        <CustomMessage type="success" content="Item added successfully!" />
+        <CustomMessage
+          type="success"
+          content="Item added successfully!"
+        />
       )}
       {errorMessageVisible && (
-        <CustomMessage type="error" content="Validation failed. Please check the form." />
+        <CustomMessage
+          type="error"
+          content="Validation failed. Please check the form."
+        />
       )}
       <Form
         layout="vertical"
@@ -183,8 +265,9 @@ export default function Item() {
             <Form.Item
               label="Category"
               name="category"
-              initialValue={undefined}
-              // initialValue={initialCategory || undefined}
+              // initialValue={undefined}
+              // initialValue={newlyAddedCategory || undefined}
+              initialValue={selectedCategory}
               rules={[
                 { required: true,
                   message: "Please select a category" },
@@ -192,19 +275,22 @@ export default function Item() {
               htmlFor="category-select"
             >
               <Select
-                autoFocus
+                // autoFocus
                 style={{ width: "100%", maxWidth: "200px" }}
                 // options={categories}
-                placeholder="Select a category"
+                // placeholder="Select a category"
                 loading={loadingCategories}
                 id="category-select"
                 onSelect={handleCategorySelect}
+                value={selectedCategory} 
+                onChange={handleCategoryChange}
+                // value={newlyAddedCategory || undefined}
               >
                 {categories.map(option => (
                   <Option
                     key={option.value}
                     value={option.value}
-                    label={option.label}
+                    // label={option.label}
                   >
                     {option.label}
                   </Option>

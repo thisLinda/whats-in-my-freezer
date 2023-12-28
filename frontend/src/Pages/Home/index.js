@@ -20,12 +20,13 @@ export default function HomePage() {
 
   const handleAddItem = () => {
     if (category) {
-      navigate(`/item/${encodeURIComponent(category)}`)
+      navigate(`/item/${encodeURIComponent(category)}`, { passedCategories: categories,
+      })
     }
   }
 
   const handleCategoryChange = (e) => {
-    setCategory(e.target.value)
+    setCategory(e.target.value.toUpperCase())
   }
 
   const handleAddCategory = () => {
@@ -35,32 +36,58 @@ export default function HomePage() {
         .then((response) => {
           const existingCategories = response.data.data
 
-          const categoryExists = existingCategories.some((existingCat) => existingCat.name === category)
+          const categoryExists = existingCategories.some(
+            (existingCat) => existingCat.name === category
+          )
 
-          if (categoryExists) {
-            message.warning("Category already exists.")
-          } else {
+          if (!categoryExists) {
+          //   message.warning("Category already exists.")
+          // } else {
             axios
               .post("http://localhost:5555/categories", { name: category })
-              .then(() => {
-                message.success("Category added successfully.")
+              .then((addCategoryResponse) => {
+                const newCategoryId = addCategoryResponse.data.id
+                // message.success("Category added successfully.")
 
-                setCategories((prevCategories) => [
-                  ...prevCategories,
-                  { value: category, label: category },
-                ])
+                axios
+                  .get("http://localhost:5555/categories")
+                  .then((response) => {
+                    const formattedCategories = response.data.data.map(
+                      (category) => ({
+                        value: category._id,
+                        label: category.name,
+                      })
+                    )
 
-                setOpen(false)
-                navigate(`/item/${encodeURIComponent(category)}`)
+                    const newCategory = {
+                      value: newCategoryId,
+                      label: category,
+                    }
+
+                    const updatedCategories = [newCategory, ...formattedCategories]
+
+                    setCategories(updatedCategories)
+                    setOpen(false)
+
+                    navigate(`/item/${encodeURIComponent(category)}`, {
+                      passedCategories: updatedCategories,
+                      newlyAddedCategory: category
+                    })
+                  })
+                  .catch((error) => {
+                    console.log(error)
+                  })
               })
               .catch((error) => {
-                console.log(error);
+                console.log(error)
                 message.error("Failed to add category.")
               })
+          } else {
+            message.warning("Category already exists.")
           }
         })
         .catch((error) => {
-          console.log(error);
+          console.log(error)
           message.error("Error checking category existence.")
         })
     }
@@ -118,4 +145,3 @@ export default function HomePage() {
     </div>
   )
 }
-
