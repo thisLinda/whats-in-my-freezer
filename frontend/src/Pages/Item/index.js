@@ -34,7 +34,7 @@ export default function Item(props) {
   const [categories, setCategories] = useState(props.passedCategories || [])
   const [localCategories, setLocalCategories] = useState([])
   const [loadingCategories, setLoadingCategories] = useState(false)
-  const [newlyAddedCategory, setNewlyAddedCategory] = useState("")
+  const [newlyAddedCategory, setNewlyAddedCategory] = useState(props.newlyAddedCategory || "")
   const [selectedCategory, setSelectedCategory] = useState(undefined)
 
   const { category } = useParams()
@@ -282,7 +282,7 @@ export default function Item(props) {
                 loading={loadingCategories}
                 id="category-select"
                 onSelect={handleCategorySelect}
-                value={selectedCategory} 
+                value={newlyAddedCategory} 
                 onChange={handleCategoryChange}
                 // value={newlyAddedCategory || undefined}
               >

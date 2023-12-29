@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 // import { useNavigate } from "react-router-dom"
 import { Button, Input, Modal, message } from "antd"
 import { SelectOutlined} from "@ant-design/icons"
@@ -10,19 +10,26 @@ import axios from "axios"
 export default function HomePage() {
   // const [item, setItem] = useState("")
   const [category, setCategory] = useState("")
-  const [categories, setCategories] = useState("")
+  const [categories, setCategories] = useState([])
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [openAddCategoryModal, setOpenAddCategoryModal] = useState(false)
+  const [openOptionsModal, setOpenOptionsModal] = useState(false)
   const navigate = useNavigate()
   const inputRef = useRef(null)
 
   // NOTE: not viewing all categories here!
 
   const handleAddItem = () => {
-    if (category) {
-      navigate(`/item/${encodeURIComponent(category)}`, { passedCategories: categories,
-      })
-    }
+    // commented out to prevent open of item component unnecessarily from category 
+    // navigate("/item")
+    // old code below
+    // if (category) {
+    //   navigate(`/item/${encodeURIComponent(category)}`, {
+    //     passedCategories: categories,
+    //     newlyAddedCategory: category
+    //   })
+    // }
   }
 
   const handleCategoryChange = (e) => {
@@ -41,42 +48,22 @@ export default function HomePage() {
           )
 
           if (!categoryExists) {
-          //   message.warning("Category already exists.")
-          // } else {
             axios
               .post("http://localhost:5555/categories", { name: category })
               .then((addCategoryResponse) => {
-                const newCategoryId = addCategoryResponse.data.id
-                // message.success("Category added successfully.")
+                const newCategoryData = addCategoryResponse.data
 
-                axios
-                  .get("http://localhost:5555/categories")
-                  .then((response) => {
-                    const formattedCategories = response.data.data.map(
-                      (category) => ({
-                        value: category._id,
-                        label: category.name,
-                      })
-                    )
+                const newCategory = {
+                  value: newCategoryData._id,
+                  label: newCategoryData.name,
+                }
 
-                    const newCategory = {
-                      value: newCategoryId,
-                      label: category,
-                    }
+                setCategories((prevCategories) => [newCategory, ...prevCategories])
 
-                    const updatedCategories = [newCategory, ...formattedCategories]
+                setOpenAddCategoryModal(false)
 
-                    setCategories(updatedCategories)
-                    setOpen(false)
-
-                    navigate(`/item/${encodeURIComponent(category)}`, {
-                      passedCategories: updatedCategories,
-                      newlyAddedCategory: category
-                    })
-                  })
-                  .catch((error) => {
-                    console.log(error)
-                  })
+                message.success("Category added successfully!")
+                showOptionsModal()
               })
               .catch((error) => {
                 console.log(error)
@@ -90,7 +77,15 @@ export default function HomePage() {
           console.log(error)
           message.error("Error checking category existence.")
         })
+    } else {
+      message.warning("Please enter a category name.")
     }
+  }
+
+  const handleAddAnotherCategory = () => {
+    setOpenOptionsModal(false)
+    setOpenAddCategoryModal(true)
+    setCategory("")
   }
 
   const handleInputKeyDown = (e) => {
@@ -101,14 +96,36 @@ export default function HomePage() {
   }
 
   const showModal = () => {
-    setOpen(true)
+    setCategory("")
+    setOpenAddCategoryModal(true)
+  }
+
+  const handleOptionsModalOk = (selectedOption) => {
+    if (selectedOption === "category") {
+      handleAddAnotherCategory()
+    } else if (selectedOption === "item") {
+      handleAddItem()
+    } else {
+      navigate('/')
+    }
+  }
+
+  const handleOptionsModalCancel = () => {
+    setOpenOptionsModal(false)
+  }
+
+  const showOptionsModal = () => {
+    setOpenAddCategoryModal(false)
+    setOpenOptionsModal(true)
   }
 
   useEffect(() => {
-    if (open && inputRef.current) {
-      inputRef.current.focus();
+    if (openAddCategoryModal && inputRef.current) {
+      setTimeout(() => {
+        inputRef.current.focus()
+      }, 100)
     }
-  }, [open])
+  }, [openAddCategoryModal])
 
   return (
     <div className="container">
@@ -128,9 +145,11 @@ export default function HomePage() {
       </div>
       <Modal
         title="Add Category"
-        open={open}
+        open={openAddCategoryModal}
+        // open={open}
         onOk={handleAddCategory}
-        onCancel={() => setOpen(false)}
+        // onCancel={() => setOpen(false)}
+        onCancel={() => setOpenAddCategoryModal(false)}
       >
         <Input
           ref={inputRef}
@@ -141,6 +160,16 @@ export default function HomePage() {
           onKeyDown={handleInputKeyDown}
           onChange={handleCategoryChange}
         />
+      </Modal>
+      <Modal
+        title="Options"
+        open={openOptionsModal}
+        onOk={handleOptionsModalOk}
+        onCancel={handleOptionsModalCancel}
+      >
+        <Button onClick={() => handleOptionsModalOk("category")}> Add Another Category</Button>
+        <Button onClick={() => handleOptionsModalOk("item")}>Add an Item</Button>
+        <Button onClick={() => handleOptionsModalOk("done")}>Done</Button>
       </Modal>
     </div>
   )

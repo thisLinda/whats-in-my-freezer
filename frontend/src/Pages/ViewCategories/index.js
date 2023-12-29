@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Divider, List, Dropdown, Menu, Modal, Input } from "antd"
+import { Divider, List, Dropdown, Menu, Modal, Input, Table } from "antd"
 import axios from "axios"
 import Spinner from "../../Components/Spinner/index"
 import "./index.css"
@@ -83,6 +83,8 @@ export default function ViewCategories() {
     setNewCategoryName(null)
   }
 
+  const sortedCategory = categoryList.sort((a, b) => a.name.localeCompare(b.name))
+
   return (
     <div className="categoryList">
       <>
@@ -90,7 +92,7 @@ export default function ViewCategories() {
         <List
           size="large"
           bordered
-          dataSource={categoryList}
+          dataSource={sortedCategory}
           renderItem={(category) => (
             <List.Item key={category.id}>
               <Dropdown
