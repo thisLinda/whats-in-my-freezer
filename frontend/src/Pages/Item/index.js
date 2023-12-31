@@ -10,6 +10,7 @@ import {
   Form,
   Input,
   InputNumber,
+  InputRef,
   Row,
   Select,
   Spin
@@ -42,7 +43,6 @@ export default function Item(props) {
   const [form] = Form.useForm()
 
   const itemInputRef = useRef(null)
-  const categoryInputRef = useRef(null)
   const quantityInputRef = useRef(null)
   const dateInputRef = useRef(null)
   const notesInputRef = useRef(null)
@@ -51,32 +51,33 @@ export default function Item(props) {
 
   const now = dayjs()
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (!props.passedCategories) {
-          setLoadingCategories(true)
-          const response = await axios.get("http://localhost:5555/categories")
-          const formattedCategories = response.data.data.map((category) => ({
-            value: category._id,
-            label: category.name
-          }))
-          setCategories(formattedCategories);
-          setLoadingCategories(false)
-        }
-      } catch(error) {
-          console.log(error)
-          setLoadingCategories(false)
-        }
-      }
+  // prior functionality
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       if (!props.passedCategories) {
+  //         setLoadingCategories(true)
+  //         const response = await axios.get("http://localhost:5555/categories")
+  //         const formattedCategories = response.data.data.map((category) => ({
+  //           value: category._id,
+  //           label: category.name
+  //         }))
+  //         setCategories(formattedCategories);
+  //         setLoadingCategories(false)
+  //       }
+  //     } catch(error) {
+  //         console.log(error)
+  //         setLoadingCategories(false)
+  //       }
+  //     }
 
-      fetchData()
+  //     fetchData()
 
-      // Set the newly added category if available in props
-      if (props.newlyAddedCategory) {
-        setSelectedCategory(props.newlyAddedCategory)
-      }
-    }, [props.passedCategories, props.newlyAddedCategory])
+  //     // Set the newly added category if available in props
+  //     if (props.newlyAddedCategory) {
+  //       setSelectedCategory(props.newlyAddedCategory)
+  //     }
+  //   }, [props.passedCategories, props.newlyAddedCategory])
 
 // useEffect(() => {
 //     if (props.passedCategories) {
@@ -136,11 +137,23 @@ export default function Item(props) {
   //   }
   // }, [props.passedCategories])
 
-  const handleCategorySelect = (value) => {
-    if (value && itemInputRef.current) {
+  // const handleCategorySelect = (value) => {
+  //   if (value && itemInputRef.current) {
+  //     itemInputRef.current.focus()
+  //   }
+  // }
+
+  // const handleItemSelect = () => {
+  //   if (itemInputRef.current) {
+  //     itemInputRef.current.focus()
+  //   }
+  // }
+
+  useEffect(() => {
+    if (itemInputRef.current) {
       itemInputRef.current.focus()
     }
-  }
+  }, [])
 
   const handleCategoryChange = (value) => {
     setSelectedCategory(value)
@@ -265,8 +278,6 @@ export default function Item(props) {
             <Form.Item
               label="Category"
               name="category"
-              // initialValue={undefined}
-              // initialValue={newlyAddedCategory || undefined}
               initialValue={selectedCategory}
               rules={[
                 { required: true,
@@ -275,22 +286,17 @@ export default function Item(props) {
               htmlFor="category-select"
             >
               <Select
-                // autoFocus
                 style={{ width: "100%", maxWidth: "200px" }}
-                // options={categories}
                 // placeholder="Select a category"
                 loading={loadingCategories}
                 id="category-select"
-                onSelect={handleCategorySelect}
                 value={newlyAddedCategory} 
                 onChange={handleCategoryChange}
-                // value={newlyAddedCategory || undefined}
               >
                 {categories.map(option => (
                   <Option
                     key={option.value}
                     value={option.value}
-                    // label={option.label}
                   >
                     {option.label}
                   </Option>
@@ -314,8 +320,8 @@ export default function Item(props) {
               hasFeedback
             >
               <Input
-                // autoFocus
                 ref={itemInputRef}
+                placeholder="Enter new item"
                 required
                 tabIndex={1}
                 onKeyDown={(e) => handleInputKeyDown(e, quantityInputRef)}
