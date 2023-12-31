@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
-// import { useNavigate } from "react-router-dom"
-import { Button, Input, Modal, message } from "antd"
+import { Button, ConfigProvider, Input, Modal, message } from "antd"
 import { SelectOutlined} from "@ant-design/icons"
 import "./index.css"
 import Spinner from "../../Components/Spinner"
@@ -11,25 +10,15 @@ export default function HomePage() {
   // const [item, setItem] = useState("")
   const [category, setCategory] = useState("")
   const [categories, setCategories] = useState([])
-  const [open, setOpen] = useState(false)
+  // const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [openAddCategoryModal, setOpenAddCategoryModal] = useState(false)
   const [openOptionsModal, setOpenOptionsModal] = useState(false)
   const navigate = useNavigate()
   const inputRef = useRef(null)
 
-  // NOTE: not viewing all categories here!
-
   const handleAddItem = () => {
-    // commented out to prevent open of item component unnecessarily from category 
-    // navigate("/item")
-    // old code below
-    // if (category) {
-    //   navigate(`/item/${encodeURIComponent(category)}`, {
-    //     passedCategories: categories,
-    //     newlyAddedCategory: category
-    //   })
-    // }
+    navigate("/item")
   }
 
   const handleCategoryChange = (e) => {
@@ -90,7 +79,6 @@ export default function HomePage() {
 
   const handleInputKeyDown = (e) => {
     if (e.key === "Enter") {
-      handleAddItem()
       handleAddCategory()
     }
   }
@@ -105,8 +93,8 @@ export default function HomePage() {
       handleAddAnotherCategory()
     } else if (selectedOption === "item") {
       handleAddItem()
-    } else {
-      navigate('/')
+    } else if (selectedOption === "done") {
+      setOpenOptionsModal(false)
     }
   }
 
@@ -128,49 +116,49 @@ export default function HomePage() {
   }, [openAddCategoryModal])
 
   return (
-    <div className="container">
-      <div className="btn-container">
-        <Button
-          className="btn btn-item"
-          onClick={handleAddItem}
+    <ConfigProvider>
+      <div className="container">
+        <div className="btn-container">
+          <Button
+            className="btn btn-item"
+            onClick={handleAddItem}
+          >
+            <SelectOutlined /> Add Item
+          </Button>
+          <Button
+            className="btn btn-category"
+            onClick={showModal}
+          >
+            <SelectOutlined />Add Category
+          </Button>
+        </div>
+        <Modal
+          title="Add Category"
+          open={openAddCategoryModal}
+          onOk={handleAddCategory}
+          onCancel={() => setOpenAddCategoryModal(false)}
         >
-          <SelectOutlined /> Add Item
-        </Button>
-        <Button
-          className="btn btn-category"
-          onClick={showModal}
+          <Input
+            ref={inputRef}
+            showCount
+            maxLength={50}
+            placeholder="Enter Category"
+            value={category}
+            onKeyDown={handleInputKeyDown}
+            onChange={handleCategoryChange}
+          />
+        </Modal>
+        <Modal
+          title="Options"
+          open={openOptionsModal}
+          onOk={handleOptionsModalOk}
+          onCancel={handleOptionsModalCancel}
         >
-          <SelectOutlined />Add Category
-        </Button>
+          <Button onClick={() => handleAddAnotherCategory("category")}> Add Another Category</Button>
+          <Button onClick={() => handleOptionsModalOk("item")}>Add an Item</Button>
+          <Button onClick={() => handleOptionsModalOk("done")}>Done</Button>
+        </Modal>
       </div>
-      <Modal
-        title="Add Category"
-        open={openAddCategoryModal}
-        // open={open}
-        onOk={handleAddCategory}
-        // onCancel={() => setOpen(false)}
-        onCancel={() => setOpenAddCategoryModal(false)}
-      >
-        <Input
-          ref={inputRef}
-          showCount
-          maxLength={50}
-          placeholder="Enter Category"
-          value={category}
-          onKeyDown={handleInputKeyDown}
-          onChange={handleCategoryChange}
-        />
-      </Modal>
-      <Modal
-        title="Options"
-        open={openOptionsModal}
-        onOk={handleOptionsModalOk}
-        onCancel={handleOptionsModalCancel}
-      >
-        <Button onClick={() => handleOptionsModalOk("category")}> Add Another Category</Button>
-        <Button onClick={() => handleOptionsModalOk("item")}>Add an Item</Button>
-        <Button onClick={() => handleOptionsModalOk("done")}>Done</Button>
-      </Modal>
-    </div>
+    </ConfigProvider>
   )
 }
