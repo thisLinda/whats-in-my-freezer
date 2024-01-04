@@ -5,6 +5,7 @@ import { SelectOutlined} from "@ant-design/icons"
 import "./index.css"
 import Spinner from "../../Components/Spinner"
 import axios from "axios"
+import { useSnackbar } from "notistack"
 
 export default function HomePage() {
   // const [item, setItem] = useState("")
@@ -16,6 +17,7 @@ export default function HomePage() {
   const [openOptionsModal, setOpenOptionsModal] = useState(false)
   const navigate = useNavigate()
   const inputRef = useRef(null)
+  const { enqueueSnackbar } = useSnackbar()
 
   const handleAddItem = () => {
     navigate("/item")
@@ -50,24 +52,33 @@ export default function HomePage() {
                 setCategories((prevCategories) => [newCategory, ...prevCategories])
 
                 setOpenAddCategoryModal(false)
+                
+                enqueueSnackbar("Category added successfully", { variant: "success"})
 
-                message.success("Category added successfully!")
+                // message.success("Category added successfully!")
                 showOptionsModal()
               })
               .catch((error) => {
                 console.log(error)
-                message.error("Failed to add category.")
+                enqueueSnackbar("Error", { variant: "error"})
+                // message.error("Failed to add category.")
               })
           } else {
-            message.warning("Category already exists.")
+            enqueueSnackbar("Category already exists.", { variant: "error"})
+
+            // message.warning("Category already exists.")
           }
         })
         .catch((error) => {
-          console.log(error)
-          message.error("Error checking category existence.")
+          enqueueSnackbar("Error checking that the category already exists.", { variant: "error"})
+
+          // console.log(error)
+          // message.error("Error checking category existence.")
         })
     } else {
-      message.warning("Please enter a category name.")
+      enqueueSnackbar("Please enter a category name.", { variant: "error"})
+
+      // message.warning("Please enter a category name.")
     }
   }
 

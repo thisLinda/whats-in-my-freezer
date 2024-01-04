@@ -35,29 +35,6 @@ router.post("/", async (request, response) => {
   }
 })
 
-// router.post("/", async (request, response) => {
-//   try {
-//     console.log(request.body)
-//     if (
-//       !request.body.name
-//     ) {
-//       return response.status(400).send({
-//         message: "Send the required field: name",
-//       })
-//     }
-//     const newCategory = {
-//       name: request.body.name
-//     }
-
-//     const category = await Category.create(newCategory)
-
-//     return response.status(201).send(category)
-//   } catch (error) {
-//     console.log(error.message)
-//     response.status(500).send({ message: error.message })
-//   }
-// })
-
 // route for GET all categories
 router.get("/", async (request, response) => {
   try {
