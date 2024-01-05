@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Divider, List, Dropdown, Menu, Modal, Input, Row, Col } from "antd"
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons"
 import axios from "axios"
 import Spinner from "../../Components/Spinner/index"
+import { useSnackbar } from "notistack"
 import "./index.css"
 
 export default function ViewCategories() {
@@ -11,6 +12,17 @@ export default function ViewCategories() {
   const [selectedCategoryId, setSelectedCategoryId] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [newCategoryName, setNewCategoryName] = useState("")
+  const inputRef = useRef(null)
+
+  const { enqueueSnackbar } = useSnackbar()
+
+  useEffect(() => {
+    if (isModalOpen && inputRef.current) {
+      setTimeout(() => {
+        inputRef.current.focus()
+      }, 100)
+    }
+  }, [isModalOpen])
 
   useEffect(() => {
     setLoading(true)
@@ -41,9 +53,12 @@ export default function ViewCategories() {
         setCategoryList(updatedList)
         setIsModalOpen(false)
         setNewCategoryName("")
+        enqueueSnackbar("Category was updated successfully", { variant: "success" })
       })
       .catch((error) => {
-        console.log(error)
+        enqueueSnackbar("Error", { variant: "error" })
+
+        // console.log(error)
       })
   }
 
@@ -66,11 +81,13 @@ export default function ViewCategories() {
           (category) => category._id !== selectedCategoryId
         )
         setCategoryList(updatedList)
+        enqueueSnackbar("Category was deleted successfully", { variant: "success" })
         setSelectedCategoryId(null)
         setIsModalOpen(false)
       })
       .catch((error) => {
-        console.log(error)
+        enqueueSnackbar("Error", { variant: "error" })
+        // console.log(error)
       })
   }
 
@@ -94,12 +111,20 @@ export default function ViewCategories() {
               <Dropdown
                 overlay={
                   <Menu>
-                    <Menu.Item onClick={() => handleMenuClick("edit", category._id)}>
-                      <EditOutlined className="anticon-edit" />
-                    </Menu.Item>
-                    <Menu.Item onClick={() => handleMenuClick('delete', category._id)}>
-                      <DeleteOutlined style={{ color: "red" }} className="anticon-delete" />
-                    </Menu.Item>
+                    <Row>                      
+                      <Menu.Item
+                        style={{ backgroundColor: "chartreuse", borderRadius: "0" }}
+                        onClick={() => handleMenuClick("edit", category._id)}
+                        icon ={<EditOutlined
+                        className="anticon-edit" />}
+                      />
+                      <Menu.Item
+                        style={{ backgroundColor: "chartreuse", borderRadius: "0" }}
+                        onClick={() => handleMenuClick('delete', category._id)}
+                        icon={<DeleteOutlined
+                          style={{ color: "red" }}className="anticon-delete" />}
+                      />
+                    </Row>
                   </Menu>
                 }
                 trigger={["click"]}
@@ -115,15 +140,15 @@ export default function ViewCategories() {
           onOk={() => handleEdit(newCategoryName)}
           onCancel={handleCancel}
         >
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <EditOutlined className="anticon-edit" style={{ marginRight: '10px' }} />
+          <div>            
             <Input
+              ref={inputRef}
               value={newCategoryName}
+              onInput={e => e.target.value = e.target.value.toUpperCase()}
               onChange={(e) => setNewCategoryName(e.target.value)}
               onPressEnter={() => handleEdit(newCategoryName)}
               style={{ flex: 1 }}
             />
-            <DeleteOutlined style={{ color: "red", marginLeft: '10px' }} className="anticon-delete" />
           </div>
           {/* <Row justify="space-between" align="middle">
             <Col>

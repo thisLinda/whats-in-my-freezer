@@ -1,17 +1,54 @@
-# Getting Started!
 
-Tackling a personal and much-needed app.
+## :star2: About this Project
 
-Challenging myself with new learning by incorporating [Ant Design](https://ant.design/) rather than Bootstrap or MUI.
+Tackling the challenge of building my first app! 
 
-## Available Scripts
+That wasn't enough of a hurdle so I decided to learn by incorporating [Ant Design](https://ant.design/) a "UI Design Language and React UI library." 
 
-In the project directory, you can run:
 
-### `npm start`
+## :toolbox: Getting Started
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### :bangbang: Prerequisites
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+This project uses NPM as package manager
+
+
+### :gear: Installation
+
+Install npm
+
+```bash
+  npm install
+```
+
+### :running: Run Locally
+
+Clone the project
+
+```bash
+  git clone https://github.com/thisLinda/whats-in-my-freezer.git
+```
+
+Go to the project directory
+
+```bash
+  cd whats-in-my-freezer
+```
+
+Install dependencies: note 3 package.json files in the project
+
+```bash
+  npm list
+```
+
+Start the server in development mode
+
+```bash
+  npm start
+```
+
+
+## :gem: Acknowledgements
+
+I've had this repo pinned for a LONG TIME!
+[https://github.com/Louis3797/awesome-readme-template](https://github.com/Louis3797/awesome-readme-template)
