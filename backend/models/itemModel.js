@@ -25,7 +25,11 @@ const itemSchema = mongoose.Schema(
     notes: {
       type: String,
       required: false,
-    }
+    },
+    categoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+    },
   },
   {
     timestamps: true,

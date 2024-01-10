@@ -1,9 +1,9 @@
 
 ## :star2: About this Project
 
-Tackling the challenge of building my first app! 
+Tackling the challenge of building my first app! I decided on the MERN stack to familiarize myself with MongoDB and Express.
 
-That wasn't enough of a hurdle so I decided to learn by incorporating [Ant Design](https://ant.design/) a "UI Design Language and React UI library." 
+That wasn't enough of a hurdle so I decided to learn by incorporating [Ant Design](https://ant.design/) a "UI Design Language and React UI library."
 
 
 ## :toolbox: Getting Started

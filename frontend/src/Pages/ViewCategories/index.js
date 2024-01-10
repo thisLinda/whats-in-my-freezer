@@ -57,8 +57,6 @@ export default function ViewCategories() {
       })
       .catch((error) => {
         enqueueSnackbar("Error", { variant: "error" })
-
-        // console.log(error)
       })
   }
 
@@ -68,26 +66,29 @@ export default function ViewCategories() {
       setSelectedCategoryId(categoryId)
     } else if (action === "delete") {
       setSelectedCategoryId(categoryId)
-      handleDelete()
+      handleDelete(categoryId)
     }
   }
 
-  const handleDelete = () => {
+  const handleDelete = (categoryIdToDelete) => {
     // Delete category from the backend and then update the category list
+    if (!categoryIdToDelete) {
+      console.error("No category selected for deletion")
+      return
+    }
+    
     axios
-      .delete(`http://localhost:5555/categories/${selectedCategoryId}`)
+      .delete(`http://localhost:5555/categories/${categoryIdToDelete}`)
       .then((response) => {
         const updatedList = categoryList.filter(
-          (category) => category._id !== selectedCategoryId
+          (category) => category._id !== categoryIdToDelete
         )
         setCategoryList(updatedList)
         enqueueSnackbar("Category was deleted successfully", { variant: "success" })
-        setSelectedCategoryId(null)
         setIsModalOpen(false)
       })
       .catch((error) => {
-        enqueueSnackbar("Error", { variant: "error" })
-        // console.log(error)
+        enqueueSnackbar("Error deleting category", { variant: "error" })
       })
   }
 
@@ -113,13 +114,13 @@ export default function ViewCategories() {
                   <Menu>
                     <Row>                      
                       <Menu.Item
-                        style={{ backgroundColor: "chartreuse", borderRadius: "0" }}
+                        style={{ borderRadius: "0" }}
                         onClick={() => handleMenuClick("edit", category._id)}
                         icon ={<EditOutlined
                         className="anticon-edit" />}
                       />
                       <Menu.Item
-                        style={{ backgroundColor: "chartreuse", borderRadius: "0" }}
+                        style={{ borderRadius: "0" }}
                         onClick={() => handleMenuClick('delete', category._id)}
                         icon={<DeleteOutlined
                           style={{ color: "red" }}className="anticon-delete" />}
@@ -150,21 +151,6 @@ export default function ViewCategories() {
               style={{ flex: 1 }}
             />
           </div>
-          {/* <Row justify="space-between" align="middle">
-            <Col>
-              <EditOutlined className="anticon-edit" />
-            </Col>
-            <Col flex="auto">
-              <Input
-                value={newCategoryName}
-                onChange={(e) => setNewCategoryName(e.target.value)}
-                onPressEnter={() => handleEdit(newCategoryName)}
-              />
-            </Col>
-            <Col>
-              <DeleteOutlined style={{ color: "red" }} className="anticon-delete" />
-            </Col>
-          </Row> */}
         </Modal>
       </>
     </div>

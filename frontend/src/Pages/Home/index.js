@@ -15,6 +15,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false)
   const [openAddCategoryModal, setOpenAddCategoryModal] = useState(false)
   const [openOptionsModal, setOpenOptionsModal] = useState(false)
+  const [newlyAddedCategory, setNewlyAddedCategory] = useState({})
   const navigate = useNavigate()
   const inputRef = useRef(null)
   const { enqueueSnackbar } = useSnackbar()
@@ -50,6 +51,10 @@ export default function HomePage() {
                 }
 
                 setCategories((prevCategories) => [newCategory, ...prevCategories])
+
+                setNewlyAddedCategory(newCategory)
+
+                // navigate("/item", {state: { updatedCategories: [newCategory, ...categories] }})
 
                 setOpenAddCategoryModal(false)
                 

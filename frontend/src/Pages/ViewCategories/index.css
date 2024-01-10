@@ -2,22 +2,11 @@
   background-color: chartreuse;
 }
 
-.ant-dropdown-menu-item {
-  padding: 0;
-  border-radius: 0;
-}
-
 .anticon-edit {
-  padding-left: 5px;
   margin-left: 10px;
 }
 
 .anticon-edit, .anticon-delete {
-  /* margin: 0; */
-  /* padding: 0; */
-  background-color: fuchsia;
-  /* border-radius: 0; */
-  /* justify-content: center;  */
-  /* display: inline-flex; */
-  /* align-items: space-between; */
+  padding: 0;
+  /* background-color: fuchsia; */
 }

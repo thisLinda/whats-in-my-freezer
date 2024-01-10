@@ -23,7 +23,9 @@ import axios from "axios"
 const { TextArea } = Input
 const { Option } = Select
 
-export default function Item(props) {
+// export default function Item(props) {
+export default function Item({ passedCategories, newlyAddedCategory }) {
+
   const [componentDisabled, setComponentDisabled] = useState(false)
   const [loading, setLoading] = useState(false)
   const [itemQuantity, setItemQuantity] = useState("")
@@ -31,18 +33,20 @@ export default function Item(props) {
   const [selectedUnit, setSelectedUnit] = useState("")
   const [successMessageVisible, setSuccessMessageVisible] = useState(false)
   const [errorMessageVisible, setErrorMessageVisible] = useState(false)
-  const { passedCategories } = props
-  const [categories, setCategories] = useState(props.passedCategories || [])
-  const [localCategories, setLocalCategories] = useState([])
+  // const { passedCategories } = props
+  // const [categories, setCategories] = useState(props.passedCategories || [])
+  const [categories, setCategories] = useState(passedCategories || [])
   const [loadingCategories, setLoadingCategories] = useState(false)
-  const [newlyAddedCategory, setNewlyAddedCategory] = useState(props.newlyAddedCategory || "")
+  // const [newlyAddedCategory, setNewlyAddedCategory] = useState(props.newlyAddedCategory || "")
   const [selectedCategory, setSelectedCategory] = useState(undefined)
+  const [itemData, setItemData] = useState({})
 
   const { category } = useParams()
+  // const inputRef = useRef(null)
 
   const [form] = Form.useForm()
 
-  const itemInputRef = useRef(null)
+  const categoryInputRef = useRef(null)
   const quantityInputRef = useRef(null)
   const dateInputRef = useRef(null)
   const notesInputRef = useRef(null)
@@ -51,110 +55,35 @@ export default function Item(props) {
 
   const now = dayjs()
 
-  // prior functionality
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       if (!props.passedCategories) {
-  //         setLoadingCategories(true)
-  //         const response = await axios.get("http://localhost:5555/categories")
-  //         const formattedCategories = response.data.data.map((category) => ({
-  //           value: category._id,
-  //           label: category.name
-  //         }))
-  //         setCategories(formattedCategories);
-  //         setLoadingCategories(false)
-  //       }
-  //     } catch(error) {
-  //         console.log(error)
-  //         setLoadingCategories(false)
-  //       }
-  //     }
-
-  //     fetchData()
-
-  //     // Set the newly added category if available in props
-  //     if (props.newlyAddedCategory) {
-  //       setSelectedCategory(props.newlyAddedCategory)
-  //     }
-  //   }, [props.passedCategories, props.newlyAddedCategory])
-
-// useEffect(() => {
-//     if (props.passedCategories) {
-//       setCategories(props.passedCategories)
-//     }
-
-//     if (props.newlyAddedCategory) {
-//       setNewlyAddedCategory(props.newlyAddedCategory)
-//     }
-//   }, [props.passedCategories, props.newlyAddedCategory])
-//       // setLoadingCategories(true);
-//       axios
-//         .get('http://localhost:5555/categories')
-//         .then((response) => {
-//           const formattedCategories = response.data.data.map((category) => ({
-//             value: category._id,
-//             label: category.name
-//           }));
-
-//           setCategories(formattedCategories);
-//           setLoadingCategories(false);
-//         })
-//         .catch((error) => {
-//           console.log(error);
-//           setLoadingCategories(false);
-//         });
-//     }
-//   }, [passedCategories])
-
-  // useEffect(() => {
-  //   if (props.passedCategories) {
-  //     setCategories(props.passedCategories)
-  //   } else {
-  //     setLoadingCategories(true)
-  //     axios
-  //       .get('http://localhost:5555/categories')
-  //       .then((response) => {
-  //         const formattedCategories = response.data.data.map((category) => ({
-  //           value: category._id,
-  //           label: category.name
-  //         }))
-  //         const updatedCategories = [
-  //           {
-  //             value: 'NEW_CATEGORY_ID',
-  //             label: category
-  //           },
-  //           ...formattedCategories
-  //         ]
-
-  //         setCategories(formattedCategories)
-  //         setLoadingCategories(false)
-  //       })
-  //       .catch((error) => {
-  //         console.log(error)
-  //         setLoadingCategories(false)
-  //       })
-  //   }
-  // }, [props.passedCategories])
-
-  // const handleCategorySelect = (value) => {
-  //   if (value && itemInputRef.current) {
-  //     itemInputRef.current.focus()
-  //   }
-  // }
-
-  // const handleItemSelect = () => {
-  //   if (itemInputRef.current) {
-  //     itemInputRef.current.focus()
-  //   }
-  // }
-
   useEffect(() => {
-    if (itemInputRef.current) {
-      itemInputRef.current.focus()
+    if (categoryInputRef.current) {
+      setTimeout(() => {
+        categoryInputRef.current.focus()
+      }, 100)
     }
   }, [])
 
+  useEffect(() => {
+    if (!passedCategories) {
+      setLoadingCategories(true)
+      axios
+        .get('http://localhost:5555/categories')
+        .then((response) => {
+          const formattedCategories = response.data.data.map((category) => ({
+            value: category._id,
+            label: category.name
+          }))
+
+          setCategories(formattedCategories)
+          setLoadingCategories(false)
+        })
+        .catch((error) => {
+          console.log(error)
+          setLoadingCategories(false)
+        })
+    }
+  }, [passedCategories])
+  
   const handleCategoryChange = (value) => {
     setSelectedCategory(value)
   }
@@ -194,10 +123,6 @@ export default function Item(props) {
     calculateTotalQuantity(itemQuantity, value)
   }
 
-  const onClick = ({ key }) => {
-    CustomMessage.info(`Click on what ${key}`)
-  }
-
   const what = [
     {
       label: "",
@@ -224,49 +149,34 @@ export default function Item(props) {
   const onSubmit = () => {
     // Handle form submission without validation
     setLoading(true)
-    setTimeout(() => {
-      setSuccessMessageVisible(true)
-      setLoading(false);
-      form.resetFields();
-    }, 200)
+    const formData = form.getFieldsValue()
+    const itemData = {
+      ...formData,
+      categoryId: selectedCategory,
+    }
+    // setTimeout(() => {
+    //   setSuccessMessageVisible(true)
+    //   setLoading(false);
+    //   form.resetFields();
+    // }, 200)
   }
 
-  // validation failing
-  // const onSubmit = () => {
-  //   form
-  //     .validateFields()
-  //     .then((values) => {
-  //       if (!loading) {
-  //         setLoading(true)
-  //         setTimeout(() => {
-  //           if (!loading) {
-  //             setSuccessMessageVisible(true)
-  //             setLoading(false)
-  //             form.resetFields()
-  //           }
-  //         }, 200)
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log("Validation failed:", err)
-  //       setErrorMessageVisible(true)
-  //     })
-  // }
+  axios.post("http://localhost:5555/items", itemData)
+    .then((response) => {
+      // Handle successful response
+      setLoading(false);
+      setSuccessMessageVisible(true)
+      form.resetFields()
+    })
+    .catch((error) => {
+      // Handle error
+      setLoading(false);
+      setErrorMessageVisible(true);
+      console.error('Error:', error)
+    })
 
   return (
     <>
-      {successMessageVisible && (   
-        <CustomMessage
-          type="success"
-          content="Item added successfully!"
-        />
-      )}
-      {errorMessageVisible && (
-        <CustomMessage
-          type="error"
-          content="Validation failed. Please check the form."
-        />
-      )}
       <Form
         layout="vertical"
         disabled={componentDisabled}
@@ -276,20 +186,25 @@ export default function Item(props) {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              label="Category"
-              name="category"
+              // ref={categoryInputRef}
+              // autoFocus={true}
+              label="Category Select"
+              name="categorySelect"
               initialValue={selectedCategory}
               rules={[
                 { required: true,
                   message: "Please select a category" },
               ]}
-              htmlFor="category-select"
             >
               <Select
+                tabIndex={1}
+                autoFocus={true}
+                defaultOpen={true}
+                // ref={categoryInputRef}
                 style={{ width: "100%", maxWidth: "200px" }}
-                // placeholder="Select a category"
+                placeholder="Select a category"
                 loading={loadingCategories}
-                id="category-select"
+                // id="category-select"
                 value={newlyAddedCategory} 
                 onChange={handleCategoryChange}
               >
@@ -308,7 +223,7 @@ export default function Item(props) {
           <Col span={12}>
             <Form.Item
               label="Add Item"
-              name="addItem"
+              // name="addItem"
               rules={[
                 {
                   required: true,
@@ -320,11 +235,12 @@ export default function Item(props) {
               hasFeedback
             >
               <Input
-                ref={itemInputRef}
+                // ref={itemInputRef}
                 placeholder="Enter new item"
                 required
-                tabIndex={1}
+                tabIndex={2}
                 onKeyDown={(e) => handleInputKeyDown(e, quantityInputRef)}
+                id="add-item-input"
               />
             </Form.Item>
           </Col>
@@ -333,8 +249,9 @@ export default function Item(props) {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
+              // do I need this className?
               className="quantity"
-              name="quantity"
+              // name="quantity"
               label="Quantity"
               rules={[
                 {
@@ -347,8 +264,9 @@ export default function Item(props) {
                 onChange={handleItemQuantityChange}
                 value={itemQuantity}
                 ref={quantityInputRef}
-                tabIndex={2}
+                tabIndex={3}
                 onKeyDown={(e) => handleInputKeyDown(e, dateInputRef)}
+                id="quantity-input"
               />
             </Form.Item>
           </Col>
@@ -361,9 +279,10 @@ export default function Item(props) {
               <Select
                 value={selectedUnit}
                 onChange={handleUnitOfMeasurementChange}
-                tabIndex={3}
+                tabIndex={4}
                 ref={unitOfMeasurementSelectRef}
                 onBlur={handleUnitOfMeasurementBlur}
+                id="unit-of-measurement-select"
               >
                 {what.map((item) => (
                   <Option key={item.key} value={item.label}>
@@ -379,10 +298,11 @@ export default function Item(props) {
               <Input
                 min={0}
                 value={totalQuantity}
-                tabIndex={4}
+                tabIndex={5}
                 readOnly
                 ref={dateInputRef}
                 onKeyDown={(e) => handleInputKeyDown(e, notesInputRef)}
+                id="total-quantity-input"
               />
             </Form.Item>
           </Col>
@@ -390,9 +310,10 @@ export default function Item(props) {
         
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item
+            <Form.Item 
               label="Date"
               name="date"
+              id="date"
               initialValue={now}
               rules={[
                 {
@@ -400,20 +321,24 @@ export default function Item(props) {
                 }
               ]}
             >
-              <DatePicker tabIndex={5} />
+              <DatePicker tabIndex={6} />
             </Form.Item>
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Notes" name="notes">
+            <Form.Item
+              label="Notes"
+              name="notes"
+            >
               <TextArea
                 autoSize={{
                   minRows: 1,
                   maxRows: 6,
                 }}
                 ref={notesInputRef}
-                tabIndex={6}
+                tabIndex={7}
                 onKeyDown={(e) => handleInputKeyDown(e, submitButtonRef)}
+                id="notes"
               />
             </Form.Item>
           </Col>

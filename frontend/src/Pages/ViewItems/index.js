@@ -1,67 +1,83 @@
 import { useState } from "react"
 import { Button, Input, Modal, Table, Tag } from "antd"
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons"
+import { useSnackbar } from "notistack"
+
 
 export default function ViewItems() {
   const [alreadySelectedRows, setAlreadySelectedRows] = useState([])
   const [editingItem, setEditingItem] = useState(null)
   const [isEditing, setIsEditing] = useState(false)
+  const { enqueueSnackbar } = useSnackbar()
+
 
   const [dataSource, setDataSource] = useState([
     {
       key: "1",
-      id: 1,
-      item: "Item 1",
-      grade: "A+"
+      item: "peas",
+      category: "VEGETABLES",
+      quantity: "4",
+      dateAdded: "2015"
     },
     {
       key: "2",
-      id: 2,
-      item: "Item 2",
-      grade: "B"
+      item: "asparagus",
+      category: "VEGETABLES",
+      quantity: "1",
+      dateAdded: "2017"
     },
     {
       key: "3",
-      id: 3,
-      item: "Item 3",
-      grade: "C"
+      item: "blueberries",
+      category: "FRUIT",
+      quantity: "13",
+      dateAdded: "1982"
     },
     {
       key: "4",
-      id: 4,
-      item: "Item 4",
-      grade: "D"
+      item: "gouda",
+      category: "CHEESE",
+      quantity: "16",
+      dateAdded: "1985"
     },
     {
       key: "5",
-      id: 5,
-      item: "Item 5",
-      grade: "I"
+      item: "raspberries",
+      category: "FRUIT",
+      quantity: "6",
+      dateAdded: "1981"
     },
     {
       key: "6",
-      id: 6,
-      item: "Item 6",
-      grade: "IDK"
-    }
+      item: "filet o'beef",
+      category: "MEAT",
+      quantity: "1",
+      dateAdded: "1958"
+    },
   ])
 
   const columns = [
     {
-      title: "Item Id",
-      dataIndex: "id"
-    },
-    {
       title: "Item",
-      dataIndex: "item"
+      width: 100,
+      dataIndex: "item",
+      key: "name",
+      fixed: "left",
     },
     {
-      title: "USDA Grade",
-      dataIndex: "grade",
-      // render: (tag) => {
-      //   const color = tag.includes("A") ? "green":tag.includes("B")?"blue": "red"
-      //   return <Tag color = {color} key={tag}>{tag}</Tag>
-      // }
+      title: "Category",
+      dataIndex: "category",
+      key: "1",
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "2",
+    },
+    {
+      title: "Date Added",
+      dataIndex: "dateAdded",
+      key: "3",
     },
     {
       title: "Actions",
@@ -115,8 +131,6 @@ export default function ViewItems() {
     setEditingItem(null)
   }
 
-  // https://www.youtube.com/watch?v=aN5ISa0cQMw&list=PL-JTnqZPF5z2qTGwNkYln3m0pA0qfgHFR&index=13
-// crud https://www.youtube.com/watch?v=y4_nSE-aZhc&t=27s
   return (
     <div
       className="ItemList"
@@ -125,6 +139,9 @@ export default function ViewItems() {
       <Table
         columns={columns}
         dataSource={dataSource}
+        scroll={{
+          x: 1300,
+        }}
         rowSelection={{
           onSelect: (record) => {
             console.log({record})
@@ -178,23 +195,7 @@ export default function ViewItems() {
             return {...pre, grade:e.target.value}
           })
         }} />
-
       </Modal>
-      {/* <Table
-        columns={columns}
-        dataSource={dataSource}
-        loading={loading}
-        pagination={{
-          pageSize:20,
-        }}
-      >
-      </Table> */}
-      {/* <Table
-        style={{ width: '25%' }}
-        dataSource={ data }
-        columns={columns}
-      >
-      </Table> */}
   </div>
   )
 }

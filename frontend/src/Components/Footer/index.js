@@ -18,10 +18,28 @@ export default function AppFooter() {
           alignItems: "center",
           fontWeight: "bold",
           padding: 10,
-          fontSize: 32 }}>
-            <GithubOutlined style={{ color: "white", padding: 15 }} />
-            <LinkedinOutlined style={{ color: "white", padding: 15 }} />
-            <TwitterOutlined style={{ color: "white", padding: 15 }} />
+          fontSize: 32 }}
+        >
+          <a
+            href="https://github.com/thisLinda"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ textDecoration: "none", color: "white" }}>
+              <GithubOutlined style={{ padding: 15 }} />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/linda-forlizzi/"
+            target="_blank" rel="noopener noreferrer"
+            style={{ textDecoration: "none", color: "white" }}>
+              <LinkedinOutlined style={{ padding: 15 }} />
+          </a>
+          <a
+            href="https://twitter.com/l_forlizzi/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ textDecoration: "none", color: "white" }}>
+              <TwitterOutlined style={{ padding: 15 }} />
+          </a>
       </div>
       <Outlet />
     </div>
